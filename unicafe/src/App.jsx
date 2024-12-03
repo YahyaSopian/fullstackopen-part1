@@ -1,28 +1,50 @@
 import { useState } from "react";
-import Subtitle from "./components/Subtitle";
 import Button from "./components/Button";
-import Display from "./components/Display";
-
+import Statistics from "./components/Statistics";
 const App = () => {
   // save clicks of each button to its own state
   const [good, setGood] = useState(0);
   const [neutral, setNeutral] = useState(0);
   const [bad, setBad] = useState(0);
+  const [total, setTotal] = useState(0);
+  const [average, setAverage] = useState(0);
+  const [positivePercentage, setPositivePercentage] = useState(0);
 
-  const handleGoodClick = () => setGood(good + 1);
-  const handleNeutralClick = () => setNeutral(neutral + 1);
-  const handleBadClick = () => setBad(bad + 1);
+  const handleGoodClick = () => {
+    const updatedGood = good + 1;
+    const updatedTotal = updatedGood + neutral + bad;
+    setGood(updatedGood);
+    setTotal(updatedTotal);
+    setAverage((updatedGood - bad) / updatedTotal);
+    setPositivePercentage((updatedGood / updatedTotal) * 100);
+  };
+
+  const handleNeutralClick = () => {
+    const updatedNeutral = neutral + 1;
+    const updatedTotal = good + updatedNeutral + bad;
+    setNeutral(updatedNeutral);
+    setTotal(updatedTotal);
+    setAverage((good - bad) / updatedTotal);
+    setPositivePercentage((good / updatedTotal) * 100);
+  };
+
+  const handleBadClick = () => {
+    const updatedBad = bad + 1;
+    const updatedTotal = good + neutral + updatedBad;
+    setBad(updatedBad);
+    setTotal(updatedTotal);
+    setAverage((good - updatedBad) / updatedTotal);
+    setPositivePercentage((good / updatedTotal) * 100);
+  };
 
   return (
     <div>
-      <Subtitle title="give feedback" />
-      <Button handleClick={handleGoodClick} text="good" />
-      <Button handleClick={handleNeutralClick} text="neutral" />
-      <Button handleClick={handleBadClick} text="bad" />
-      <Subtitle title="statistics" />
-      <Display text={"good"} count={good} />
-      <Display text={"neutral"} count={neutral} />
-      <Display text={"bad"} count={bad} />
+      <h2>give feedback</h2>
+      <Button handleClick={handleGoodClick} text={"good"} />
+      <Button handleClick={handleNeutralClick} text={"neutral"} />
+      <Button handleClick={handleBadClick} text={"bad"} />
+
+      <Statistics good={good} neutral={neutral} bad={bad} total={total} average={average} percentage={positivePercentage} />
     </div>
   );
 };
